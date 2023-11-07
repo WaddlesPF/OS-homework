@@ -25,8 +25,38 @@ int pmain() {
     //std::cout << errno << std::endl;
 
     std::cout << "shared memory done" << std::endl;
+ 
+    std::cout << "semaphore setup done (producer)" << std::endl;
+    
+    // Making sure table[0-5] wiped in case shared mem did not get wiped
 
-    // Semaphore open/init
+    // Producer Loop
+    for(int t = 0; t < 5; ++t){
+        sem_wait(emptySlots);
+        sem_wait(&mutp);
+        std::cout << "producer entered crit" << std::endl;
+
+        int i = 0; 
+
+        while(table[i] && i < bsize) {++i; std::cerr << i << std::endl;}
+        //if(i >= bsize) continue;
+        table[i] = true;
+        std::cout << i << std::endl;
+        
+        sem_post(&mutp);
+        sem_post(fullSlots);
+        std::cout << "sempost for producer" << std::endl;
+         
+    }
+
+    shmdt(table);
+    shmctl(shmid, IPC_RMID, NULL);
+    std::cout << "producer finished" << std::endl;
+    return 0;
+    
+}                                                   
+
+int main(int argc, char* args[]) { 
     sem_unlink("/emptysem");
     sem_unlink("/fullsem");
     
@@ -42,40 +72,12 @@ int pmain() {
     std::cout << "full slots open" << std::endl;
 
     std::cout << "semaphore setup done (producer)" << std::endl;
-    
-    // Producer Loop
-    
-    do {
-        sem_wait(emptySlots);
-        sem_wait(&mutp);
-        std::cout << "sem_waits done" << std::endl;
 
-        int i = 0; 
-
-        while(table[i] && i < bsize) ++i;
-        table[i] = true;
-       // std::cout << i << std::endl;
-        
-        sem_post(&mutp);
-        sem_post(fullSlots);
-        std::cout << "sempost for producer" << std::endl;
-        
-        
-    } while(true);
-
-
-    shmdt(table);
-    shmctl(shmid, IPC_RMID, NULL);
-  
-    return 0;
-}                                                   
-
-int main(int argc, char* args[]) {
     std::thread t1(pmain);
     std::thread t2(pmain);
-    std::thread t3(pmain);
+    //std::thread t3(pmain);
 
-    t3.join();
+    //t3.join();
     t2.join();
     t1.join();
 
