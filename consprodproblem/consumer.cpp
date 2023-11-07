@@ -11,7 +11,7 @@ sem_t* fullSlots;
 sem_t mutc;
 int bsize = 5;
 
-int main(int argc, char* argv[]) {
+int cmain() {
     std::cout << "consumer program start" << std::endl;
     
     // Shared Memory Setup
@@ -39,6 +39,7 @@ int main(int argc, char* argv[]) {
     std::cout << "semaphore setup done (consumer)" << std::endl;
 
     // Loop
+    int o = bsize;
     do {
         std::cout << "loop start" << std::endl;
         sem_wait(fullSlots);
@@ -53,11 +54,22 @@ int main(int argc, char* argv[]) {
         sem_post(&mutc);
         sem_post(emptySlots);
         std::cout << "sempost for consumer" << std::endl;
-    } while(true);
+        --o;
+    } while(o >= 0);
 
 
     shmdt(table);
     shmctl(shmid, IPC_RMID, NULL);
   
     return 0;
-}                                              
+}                  
+
+int main(int argc, char* args[]) {
+    std::thread t1(cmain);
+    std::thread t2(cmain);
+
+    t2.join();
+    t1.join();
+
+    return 0;
+}

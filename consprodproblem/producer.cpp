@@ -12,7 +12,9 @@ sem_t* fullSlots;
 sem_t mutp;
 int bsize = 5;
 
-int main(int argc, char* argv[]) {
+
+
+int pmain() {
     std::cout << "producer program start" << std::endl;
     
     // Shared Memory Setup
@@ -41,6 +43,7 @@ int main(int argc, char* argv[]) {
 
     std::cout << "semaphore setup done (producer)" << std::endl;
     // Producer Loop
+    int o = bsize;
     do {
         sem_wait(emptySlots);
         sem_wait(&mutp);
@@ -50,13 +53,14 @@ int main(int argc, char* argv[]) {
 
         while(table[i] && i < bsize) {++i; std::cerr << i << std::endl; }
         table[i] = true;
-        std::cout << i << std::endl;
+       // std::cout << i << std::endl;
         
         sem_post(&mutp);
         sem_post(fullSlots);
         std::cout << "sempost for producer" << std::endl;
-
-    } while(true);
+        
+        --o;
+    } while(o >= 0);
 
 
     shmdt(table);
@@ -65,3 +69,12 @@ int main(int argc, char* argv[]) {
     return 0;
 }                                                   
 
+int main(int argc, char* args[]) {
+    std::thread t1(pmain);
+    std::thread t2(pmain);
+
+    t2.join();
+    t1.join();
+
+    return 0;
+}
