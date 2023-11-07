@@ -1,3 +1,5 @@
+// consumer.cpp
+
 #include <iostream>
 #include <queue>
 #include <thread>
@@ -19,7 +21,7 @@ int cmain() {
     std::cout << errno << std::endl;
     if(shmid == -1) std::cerr << "shared mem fail" << std::endl;
     bool* table = (bool*)shmat(shmid, NULL, 0);
-    //std::cout << errno << std::endl;
+    std::cout << errno << "(consumer)" << std::endl;
 
     std::cout << "shared memory done" << std::endl;   
 
@@ -30,7 +32,7 @@ int cmain() {
     std::cout << "sem_init successful" << std::endl;
     
     emptySlots = sem_open("/emptysem", 0);
-    if(emptySlots == SEM_FAILED) {std::cout << errno << std::endl; return -1; }
+    if(emptySlots == SEM_FAILED) {std::cout << errno << "consumer" << std::endl; return -1; }
 
     fullSlots = sem_open("/fullsem", 0);
     if(fullSlots == SEM_FAILED) return -1; // exit if full slots failed
@@ -68,7 +70,9 @@ int cmain() {
 int main(int argc, char* args[]) {
     std::thread t1(cmain);
     std::thread t2(cmain);
+    std::thread t3(cmain);
 
+    t3.join();
     t2.join();
     t1.join();
 

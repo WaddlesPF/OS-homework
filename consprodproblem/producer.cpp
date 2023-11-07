@@ -1,3 +1,5 @@
+// producer.cpp
+
 #include <iostream>
 #include <queue>
 #include <thread>
@@ -11,8 +13,6 @@ sem_t* emptySlots;
 sem_t* fullSlots;
 sem_t mutp;
 int bsize = 5;
-
-
 
 int pmain() {
     std::cout << "producer program start" << std::endl;
@@ -73,7 +73,9 @@ int pmain() {
 int main(int argc, char* args[]) {
     std::thread t1(pmain);
     std::thread t2(pmain);
+    std::thread t3(pmain);
 
+    t3.join();
     t2.join();
     t1.join();
 
