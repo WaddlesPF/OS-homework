@@ -22,7 +22,7 @@ int pmain() {
     //std::cout << errno << std::endl;
     if(shmid == -1) std::cerr << "shared mem fail" << std::endl;
     bool* table = (bool*)shmat(shmid, NULL, 0);
-    std::cout << errno << std::endl;
+    //std::cout << errno << std::endl;
 
     std::cout << "shared memory done" << std::endl;
 
@@ -42,8 +42,9 @@ int pmain() {
     std::cout << "full slots open" << std::endl;
 
     std::cout << "semaphore setup done (producer)" << std::endl;
+    
     // Producer Loop
-    int o = bsize;
+    
     do {
         sem_wait(emptySlots);
         sem_wait(&mutp);
@@ -51,7 +52,7 @@ int pmain() {
 
         int i = 0; 
 
-        while(table[i] && i < bsize) {++i; std::cerr << i << std::endl; }
+        while(table[i] && i < bsize) ++i;
         table[i] = true;
        // std::cout << i << std::endl;
         
@@ -59,8 +60,8 @@ int pmain() {
         sem_post(fullSlots);
         std::cout << "sempost for producer" << std::endl;
         
-        --o;
-    } while(o >= 0);
+        
+    } while(true);
 
 
     shmdt(table);

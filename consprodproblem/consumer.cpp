@@ -19,7 +19,7 @@ int cmain() {
     std::cout << errno << std::endl;
     if(shmid == -1) std::cerr << "shared mem fail" << std::endl;
     bool* table = (bool*)shmat(shmid, NULL, 0);
-    std::cout << errno << std::endl;
+    //std::cout << errno << std::endl;
 
     std::cout << "shared memory done" << std::endl;   
 
@@ -39,7 +39,7 @@ int cmain() {
     std::cout << "semaphore setup done (consumer)" << std::endl;
 
     // Loop
-    int o = bsize;
+    
     do {
         std::cout << "loop start" << std::endl;
         sem_wait(fullSlots);
@@ -49,13 +49,14 @@ int cmain() {
         
         while(!table[i] && i < bsize) ++i;
         table[i] = false;
-        std::cout << i << std::endl;
+        //std::cout << i << std::endl;
        
         sem_post(&mutc);
         sem_post(emptySlots);
         std::cout << "sempost for consumer" << std::endl;
-        --o;
-    } while(o >= 0);
+
+        
+    } while(true);
 
 
     shmdt(table);
