@@ -14,12 +14,13 @@ The only problems that could arise is giving the incorrect arguments.
 ## Compiling and Running
 ```
 g++ banker.cpp -o banker
+./banker .txt n m
 ```
 
 the process takes 3 arguments.
 the first is the .txt file with the matrices for allocation, max, and available
-the second is the number of processes 
-and the third is the number of resource types
+the n is the number of processes 
+and m is the number of resource types
 
 ## Example
 
