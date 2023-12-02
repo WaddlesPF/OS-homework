@@ -3,6 +3,7 @@
 
 
 int main(int argc, const char * argv[]) {
+    // make sure there are enough args
     if(argc < 4) {
         std::cout << "missing args. text.txt procNumCount numOfResourceType" << std::endl;
         return -1;
@@ -11,6 +12,7 @@ int main(int argc, const char * argv[]) {
     std::ifstream textDoc;
     textDoc.open(argv[1]);
     
+    // error check for if cant open file
     char input[50];
     if(!textDoc.is_open()) {
         std::cout << "error opening text document" << std::endl;
@@ -21,8 +23,6 @@ int main(int argc, const char * argv[]) {
     int n = (int)(*argv[2]) - '0';
     int m = (int)(*argv[3]) - '0';
 
-    std::cout << n << std::endl;
-
     int allocation[n][m];
     int available[m];
     int max[n][m];
@@ -30,6 +30,7 @@ int main(int argc, const char * argv[]) {
     int j = -1;
 
     // Reading the text document
+    // reading allocation
     while(textDoc.getline(input, 50)){
         ++j;
         if(input[0] == '/') break;
@@ -47,6 +48,7 @@ int main(int argc, const char * argv[]) {
         }
     }
     
+    // reading max
     j = -1;
     while(textDoc.getline(input, 50)){
         ++j;
@@ -64,7 +66,7 @@ int main(int argc, const char * argv[]) {
             ++i;
         }
     }
-
+    // reading available
      while(textDoc.getline(input, 50)) {
         if(input[0] == '/') break;
         std::cout << input << std::endl;
@@ -80,22 +82,6 @@ int main(int argc, const char * argv[]) {
         }
      }
      
-
-
-    
-    /*
-    int available[m] = { 3, 3, 2 };
-    int allocation[n][m] = {{0,1,0},
-                            {2,0,0},
-                            {3,0,2},
-                            {2,1,1},
-                            {0,0,2}};
-    int max[n][m] = {{7,5,3},
-                     {3,2,2},
-                     {9,0,2},
-                     {2,2,2},
-                     {4,3,3}}; */
-
     int need[n][m];
     for (int i = 0; i < n; ++i) {
         for (int j = 0; j < m; ++j) {
@@ -112,28 +98,39 @@ int main(int argc, const char * argv[]) {
         work[i] = available[i];
         //std::cout << work[i] << std::endl;
     }
-    
+   
+    // list of which processes finished
     int finish[n];
     for(int i = 0; i < n; ++i) finish[i] = false;
     int flag = 0;
+    
+    // for process order
     int procList[n];
     int procInd = 0;
+    
+    // Make sure the loop goes around the correct number of times
     int finalCheck = 0;
 
     while(finalCheck < n) {
         for(int i = 0; i < n; ++i){
-            
+           
+            // if finish[i] == false and need[i] <= work
             flag = 0;
             //std::cout << std::endl;
             if(finish[i] == 0) {
                 for(int j = 0; j < m; ++j){
                     //std::cout << need[i][j] << " " << work[j] << std::endl;
+                    
+                    // flag indicates finish[i]==false and need[i] <= work
                     if(need[i][j] > work[j]) {
                         flag = 1; 
                         break;
                     }
                 }
             }
+
+            // work += allocation
+            // finish[i] = true
             if(finish[i] == 1) { flag = 1; ++finalCheck; }
             //std::cout << "i is " << i << " flag is " << flag << std::endl;
             if(flag == 0) {
