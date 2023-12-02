@@ -69,7 +69,7 @@ int main(int argc, const char * argv[]) {
     // reading available
      while(textDoc.getline(input, 50)) {
         if(input[0] == '/') break;
-        std::cout << input << std::endl;
+        //std::cout << input << std::endl;
         int i = 0;
         for(int c = 0; c < 50; ++c) { 
             //std::cout << input[c] << std::endl;

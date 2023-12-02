@@ -1,4 +1,4 @@
-// Allocation (Do it in this exact order and this exact format for the program to work)
+// Allocation
 0 1 0
 2 0 0
 3 0 2
